@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models import JSONField
 
@@ -22,12 +19,17 @@ class Permission(models.Model):
     path = models.CharField(max_length=200, blank=True, null=True, help_text="前端路由地址")
     config = JSONField(default=dict, blank=True, null=True, help_text="其他配置信息")
 
-
+    def __str__(self):
+        return self.name
 
 
 class Role(models.Model):
     name = models.CharField(max_length=100, unique=True)
-
+    permissions = models.ManyToManyField(
+        Permission,
+        through='RolePermission',            # 显式指定中间表
+        related_name='roles'           # 反向访问方便，如 permission.roles.all()
+    )
     def __str__(self):
         return self.name
 
@@ -41,8 +43,11 @@ class RolePermission(models.Model):
 
 
 class User(AbstractUser):
-    # 去掉 ManyToManyField
-    pass
+    roles = models.ManyToManyField(
+        Role,
+        through='UserRole',            # 显式指定中间表
+        related_name='users'           # 反向访问方便，如 role.users.all()
+    )
 
 
 class UserRole(models.Model):
@@ -51,3 +56,6 @@ class UserRole(models.Model):
 
     class Meta:
         unique_together = ('user', 'role')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role.name}"

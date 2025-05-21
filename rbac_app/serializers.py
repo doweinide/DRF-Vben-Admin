@@ -14,8 +14,12 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class UserSerializer(serializers.ModelSerializer):
-    roles = RoleSerializer(many=True, read_only=True)
+    roles = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Role.objects.all()
+    )
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "roles")
+        # fields = "__all__"
+        exclude =["user_permissions","groups"]
