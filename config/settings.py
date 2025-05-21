@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",
-    "test_api"
+    "test_api",
+    "rbac_app"
 ]
 
 MIDDLEWARE = [
@@ -130,5 +131,27 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "config.renderers.CustomRenderer",# 配置返回通用结构
+        "rest_framework.renderers.BrowsableAPIRenderer",  # 可选
+    ],
+    #配置分页
+    'DEFAULT_PAGINATION_CLASS': 'config.pagination.CustomPageNumberPagination',
+    'PAGE_SIZE': 10,  # 每页默认10条数据
+}
+# 更改为自己重写的 User 模型
+AUTH_USER_MODEL = 'rbac_app.User'
+
+#配置schema生成
+SPECTACULAR_SETTINGS = {
+    "TITLE": "DRF-Vben-Admin",
+    "DESCRIPTION": "「DRF-Vben-Admin」 是一个基于 Django REST Framework（DRF） 与 Vben Admin（前端框架）深度适配的全栈开发解决方案，专为快速构建企业级中后台系统、管理平台或数据服务接口设计。项目通过标准化的前后端集成方案，实现了 API 开发 与 前端界面 的无缝协同，大幅降低全栈开发成本，提升交付效率。",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+
+    # ✨ 添加这个钩子函数实现全局 schema 包装
+    "POSTPROCESSING_HOOKS": [
+        "config.renderers.wrap_schema_with_three_stage",#配置返回结构
     ],
 }
