@@ -20,6 +20,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('rbac/', include('rbac_app.urls')),
     path("test/", include("test_api.urls")),  # 挂载 test 应用的路由
 ]
 #添加文档
