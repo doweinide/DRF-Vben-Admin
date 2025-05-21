@@ -1,0 +1,12 @@
+[project]
+name = "my-django-backend"
+version = "0.1.0"
+description = "dd your description hereA"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2.1",
+    "djangorestframework>=3.16.0",
+    "djangorestframework-simplejwt>=5.5.0",
+    "drf-spectacular>=0.28.0",
+]
