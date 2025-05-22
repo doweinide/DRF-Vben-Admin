@@ -6,6 +6,8 @@ BASE_SUBDIRS = [
     "serializers", "views",
     "services", "permissions", "utils", "tests", "migrations"
 ]
+# 在模块添加/删除时跳过的目录（如 migrations 不添加业务模块）
+EXCLUDED_MODEL_DIRS = ["migrations", "tests"]
 
 # 应用初始化时默认创建的基本文件
 BASIC_FILES = [
@@ -64,6 +66,9 @@ def create_model_files(app_name, model_names):
         return
 
     for subdir in BASE_SUBDIRS:
+        if subdir in EXCLUDED_MODEL_DIRS:
+            continue  # ⛔ 跳过不适合放模块的目录
+
         subdir_path = os.path.join(app_name, subdir)
         if os.path.isdir(subdir_path):
             for model_name in model_names:
@@ -76,7 +81,6 @@ def create_model_files(app_name, model_names):
                     print(f"⚠️ Already exists: {subdir}/{model_name}.py")
         else:
             print(f"⏩ Skipped missing folder: {subdir}/")
-
 # 🗑️ 删除指定模块文件（如 serializers/role.py）
 def delete_model_files(app_name, model_names):
     if not os.path.exists(app_name):
@@ -84,6 +88,9 @@ def delete_model_files(app_name, model_names):
         return
 
     for subdir in BASE_SUBDIRS:
+        if subdir in EXCLUDED_MODEL_DIRS:
+            continue  # ⛔ 同样跳过不相关的目录
+
         subdir_path = os.path.join(app_name, subdir)
         if os.path.isdir(subdir_path):
             for model_name in model_names:
